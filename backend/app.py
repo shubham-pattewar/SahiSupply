@@ -401,6 +401,8 @@ def copilot_chat(payload: Dict[str, str] = Body(...)):
         metrics=state.current_metrics,
         baseline_metrics=state.baseline_results
     )
+    return response
+
 @app.get("/api/copilot/briefing")
 def copilot_briefing():
     return state.copilot.generate_executive_summary(
