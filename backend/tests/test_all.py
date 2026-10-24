@@ -25,18 +25,29 @@ def test_api_network_nodes():
     assert len(data["rdcs"]) == 8
     assert len(data["destinations"]) == 16
 
+def test_api_sections():
+    response = client.get("/api/sections")
+    assert response.status_code == 200
+    sections = response.json()
+    assert len(sections) == 3
+    sec_ids = [s["id"] for s in sections]
+    assert "Cosmetics" in sec_ids
+    assert "Groceries" in sec_ids
+    assert "Pharmaceuticals" in sec_ids
+
 def test_api_products():
     response = client.get("/api/products")
     assert response.status_code == 200
     prods = response.json()
-    assert len(prods) == 10
+    assert len(prods) == 15
     categories = {p["category"] for p in prods}
-    assert "Dairy & Ultra-Fresh" in categories
-    assert "Cold-Pressed Beverages" in categories
+    assert "Cosmetics" in categories
+    assert "Groceries" in categories
+    assert "Pharmaceuticals" in categories
 
 def test_ml_forecasting_models():
     forecaster = state.ml_forecaster
-    eval_result = forecaster.train_and_evaluate_models("DEST-MUM-QC", "SKU-DAI-01")
+    eval_result = forecaster.train_and_evaluate_models("DEST-MUM-QC", "SKU-GRO-01")
     assert "models" in eval_result
     assert "seasonal_naive" in eval_result["models"]
     assert "moving_average_7d" in eval_result["models"]

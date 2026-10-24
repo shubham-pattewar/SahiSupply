@@ -137,28 +137,28 @@ ${data.critical_actions_required.join('\n')}
           {/* Suggested Quick Inquiry Pills */}
           <div className="px-4 py-2 bg-slate-900/80 border-t border-white/10 flex flex-wrap gap-1.5">
             <button
-              onClick={() => handleSend('Why was FEFO prioritized for dairy batches?')}
+              onClick={() => handleSend('Tell me about the Cosmetics sector margin and order dispatch strategy')}
+              className="text-[10px] px-2.5 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20 hover:bg-fuchsia-500/20 transition-all cursor-pointer"
+            >
+              💄 Cosmetics Strategy
+            </button>
+            <button
+              onClick={() => handleSend('How is the engine safeguarding Pharmaceuticals and Insulin cold chain?')}
               className="text-[10px] px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all cursor-pointer"
             >
-              💡 Why FEFO Prioritized?
+              💊 Pharma & Cold-Chain
+            </button>
+            <button
+              onClick={() => handleSend('How does FEFO prevent grocery wastage in quick-commerce dark stores?')}
+              className="text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all cursor-pointer"
+            >
+              🛒 Groceries FEFO Salvage
             </button>
             <button
               onClick={() => handleSend('Show me the ROI and savings vs legacy baseline')}
-              className="text-[10px] px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all cursor-pointer"
+              className="text-[10px] px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 transition-all cursor-pointer"
             >
               📊 ROI vs Baseline
-            </button>
-            <button
-              onClick={() => handleSend('Which stores face critical stockout risk?')}
-              className="text-[10px] px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all cursor-pointer"
-            >
-              🚨 Stockout Risks
-            </button>
-            <button
-              onClick={() => handleSend('How are cold-chain products managed?')}
-              className="text-[10px] px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all cursor-pointer"
-            >
-              ❄️ Cold-Chain Routes
             </button>
           </div>
 

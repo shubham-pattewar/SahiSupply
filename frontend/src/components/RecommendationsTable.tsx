@@ -75,11 +75,10 @@ export const RecommendationsTable: React.FC<RecommendationsTableProps> = ({
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="text-xs px-3 py-2 rounded-lg bg-slate-900 border border-white/10 text-slate-300 focus:outline-none focus:border-cyan-500/50"
           >
-            <option value="">All Categories</option>
-            <option value="Dairy & Ultra-Fresh">Dairy & Ultra-Fresh</option>
-            <option value="Cold-Pressed Beverages">Cold-Pressed Beverages</option>
-            <option value="Packaged Foods & Snacks">Packaged Foods & Snacks</option>
-            <option value="Personal & Home Care">Personal & Home Care</option>
+            <option value="">All Sectors (Cosmetics, Groceries, Pharma)</option>
+            <option value="Cosmetics">Cosmetics</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Pharmaceuticals">Pharmaceuticals</option>
           </select>
         </div>
       </div>
@@ -121,7 +120,17 @@ export const RecommendationsTable: React.FC<RecommendationsTableProps> = ({
 
                   <td className="py-3 px-3.5">
                     <div className="font-semibold text-white">{r.product_name}</div>
-                    <div className="text-[11px] text-slate-400">{r.category} | {r.sku}</div>
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                        r.category === 'Cosmetics' ? 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30' :
+                        r.category === 'Pharmaceuticals' ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30' :
+                        'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                      }`}>
+                        {r.category}
+                      </span>
+                      <span className="text-slate-600">•</span>
+                      <span className="font-mono text-slate-400">{r.sku}</span>
+                    </div>
                   </td>
 
                   <td className="py-3 px-3.5">

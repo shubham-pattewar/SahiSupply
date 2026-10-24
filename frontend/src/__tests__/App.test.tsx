@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Header } from '../components/Header';
 import { TelemetryStrip } from '../components/TelemetryStrip';
+import { SectionSelector } from '../components/SectionSelector';
 
 describe('SahiSupply Frontend Components', () => {
   it('renders Header with branding, status pill, and action buttons', () => {
@@ -53,4 +54,61 @@ describe('SahiSupply Frontend Components', () => {
     expect(screen.getByText('₹28.50L')).toBeInTheDocument();
     expect(screen.getByText('₹46.20L')).toBeInTheDocument();
   });
+
+  it('renders SectionSelector with Cosmetics, Groceries, and Pharmaceuticals tabs', () => {
+    const mockSections = [
+      {
+        id: 'Cosmetics',
+        name: 'Cosmetics & Personal Care',
+        tagline: 'High Margin & Beauty Campaign Lift',
+        icon: 'Sparkles',
+        color: 'rose',
+        description: 'Beauty serums and skincare',
+        sku_count: 5,
+        cold_chain_required: false,
+        characteristics: ['High retail margin']
+      },
+      {
+        id: 'Groceries',
+        name: 'Groceries & Fresh Dairy',
+        tagline: 'Perishable Velocity',
+        icon: 'ShoppingCart',
+        color: 'emerald',
+        description: 'Fresh dairy and juices',
+        sku_count: 5,
+        cold_chain_required: true,
+        characteristics: ['Cold-chain reefer']
+      },
+      {
+        id: 'Pharmaceuticals',
+        name: 'Pharmaceuticals & Healthcare',
+        tagline: 'Strict Regulatory',
+        icon: 'Pill',
+        color: 'sky',
+        description: 'Essential medicines',
+        sku_count: 5,
+        cold_chain_required: true,
+        characteristics: ['2-8C cold chain']
+      }
+    ];
+
+    const onSelect = vi.fn();
+    render(
+      <SectionSelector
+        activeSection="All"
+        onSelectSection={onSelect}
+        sections={mockSections}
+        orderCounts={{ all: 48, cosmetics: 14, groceries: 18, pharmaceuticals: 16 }}
+      />
+    );
+
+    expect(screen.getByText('All Sectors')).toBeInTheDocument();
+    expect(screen.getByText('Cosmetics')).toBeInTheDocument();
+    expect(screen.getByText('Groceries')).toBeInTheDocument();
+    expect(screen.getByText('Pharmaceuticals')).toBeInTheDocument();
+    expect(screen.getByText('14 Orders')).toBeInTheDocument();
+    expect(screen.getByText('18 Orders')).toBeInTheDocument();
+    expect(screen.getByText('16 Orders')).toBeInTheDocument();
+  });
 });
+

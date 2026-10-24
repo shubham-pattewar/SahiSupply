@@ -23,10 +23,78 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
 
 def build_products() -> List[ProductSKU]:
     return [
+        # --- 1. COSMETICS SECTION (5 SKUs: High Margin, Beauty & Skin Care, UV/Batch Sensitive) ---
         ProductSKU(
-            sku="SKU-DAI-01",
-            name="Amrit Malai Paneer 200g",
-            category=ProductCategory.DAIRY_FRESH,
+            sku="SKU-COS-01",
+            name="GlowAura Vitamin C Radiance Serum 30ml",
+            category=ProductCategory.COSMETICS,
+            shelf_life_days=730,
+            min_retail_shelf_life_days=180,
+            unit_cost=195.0,
+            retail_price=499.0,
+            weight_kg=0.12,
+            cold_chain_required=False,
+            unit_volume_m3=0.0003,
+            case_pack_qty=24
+        ),
+        ProductSKU(
+            sku="SKU-COS-02",
+            name="HydraPlump Hyaluronic Aqua Gel Cream 50g",
+            category=ProductCategory.COSMETICS,
+            shelf_life_days=730,
+            min_retail_shelf_life_days=180,
+            unit_cost=240.0,
+            retail_price=599.0,
+            weight_kg=0.15,
+            cold_chain_required=False,
+            unit_volume_m3=0.0004,
+            case_pack_qty=24
+        ),
+        ProductSKU(
+            sku="SKU-COS-03",
+            name="SunShield Invisible Matte Gel SPF50 80g",
+            category=ProductCategory.COSMETICS,
+            shelf_life_days=540,
+            min_retail_shelf_life_days=120,
+            unit_cost=160.0,
+            retail_price=395.0,
+            weight_kg=0.18,
+            cold_chain_required=False,
+            unit_volume_m3=0.0005,
+            case_pack_qty=36
+        ),
+        ProductSKU(
+            sku="SKU-COS-04",
+            name="VelvetMatte Transferproof Lipstick Coral",
+            category=ProductCategory.COSMETICS,
+            shelf_life_days=1095,
+            min_retail_shelf_life_days=270,
+            unit_cost=120.0,
+            retail_price=349.0,
+            weight_kg=0.05,
+            cold_chain_required=False,
+            unit_volume_m3=0.0001,
+            case_pack_qty=48
+        ),
+        ProductSKU(
+            sku="SKU-COS-05",
+            name="AyurHerb Botanical Hair Scalp Therapy 350ml",
+            category=ProductCategory.COSMETICS,
+            shelf_life_days=730,
+            min_retail_shelf_life_days=180,
+            unit_cost=135.0,
+            retail_price=299.0,
+            weight_kg=0.40,
+            cold_chain_required=False,
+            unit_volume_m3=0.0009,
+            case_pack_qty=16
+        ),
+
+        # --- 2. GROCERIES SECTION (5 SKUs: High Velocity, Fresh Dairy, Beverages, Packaged Staples) ---
+        ProductSKU(
+            sku="SKU-GRO-01",
+            name="Amrit Malai Fresh Paneer 200g",
+            category=ProductCategory.GROCERIES,
             shelf_life_days=14,
             min_retail_shelf_life_days=4,
             unit_cost=72.0,
@@ -37,9 +105,9 @@ def build_products() -> List[ProductSKU]:
             case_pack_qty=24
         ),
         ProductSKU(
-            sku="SKU-DAI-02",
+            sku="SKU-GRO-02",
             name="ProBio Greek Yogurt Berry 150g",
-            category=ProductCategory.DAIRY_FRESH,
+            category=ProductCategory.GROCERIES,
             shelf_life_days=21,
             min_retail_shelf_life_days=6,
             unit_cost=45.0,
@@ -50,22 +118,9 @@ def build_products() -> List[ProductSKU]:
             case_pack_qty=18
         ),
         ProductSKU(
-            sku="SKU-DAI-03",
-            name="Nandini Fresh Flavored Milk 200ml",
-            category=ProductCategory.DAIRY_FRESH,
-            shelf_life_days=30,
-            min_retail_shelf_life_days=8,
-            unit_cost=25.0,
-            retail_price=38.0,
-            weight_kg=0.23,
-            cold_chain_required=True,
-            unit_volume_m3=0.0004,
-            case_pack_qty=30
-        ),
-        ProductSKU(
-            sku="SKU-BEV-01",
-            name="PureValencia Cold-Pressed Juice 300ml",
-            category=ProductCategory.BEVERAGES,
+            sku="SKU-GRO-03",
+            name="PureValencia Cold-Pressed Orange Juice 300ml",
+            category=ProductCategory.GROCERIES,
             shelf_life_days=45,
             min_retail_shelf_life_days=12,
             unit_cost=68.0,
@@ -76,22 +131,9 @@ def build_products() -> List[ProductSKU]:
             case_pack_qty=12
         ),
         ProductSKU(
-            sku="SKU-BEV-02",
-            name="GreenElixir Coconut Hydration 500ml",
-            category=ProductCategory.BEVERAGES,
-            shelf_life_days=60,
-            min_retail_shelf_life_days=15,
-            unit_cost=55.0,
-            retail_price=90.0,
-            weight_kg=0.52,
-            cold_chain_required=False,
-            unit_volume_m3=0.0009,
-            case_pack_qty=12
-        ),
-        ProductSKU(
-            sku="SKU-PCK-01",
-            name="NutriBake Oats Digestive 300g",
-            category=ProductCategory.PACKAGED_FOODS,
+            sku="SKU-GRO-04",
+            name="NutriBake Oats Digestive Biscuits 300g",
+            category=ProductCategory.GROCERIES,
             shelf_life_days=180,
             min_retail_shelf_life_days=45,
             unit_cost=42.0,
@@ -102,9 +144,9 @@ def build_products() -> List[ProductSKU]:
             case_pack_qty=24
         ),
         ProductSKU(
-            sku="SKU-PCK-02",
-            name="DesiSpices Masala Noodles 4-Pack",
-            category=ProductCategory.PACKAGED_FOODS,
+            sku="SKU-GRO-05",
+            name="DesiSpices Masala Instant Noodles 4-Pack",
+            category=ProductCategory.GROCERIES,
             shelf_life_days=270,
             min_retail_shelf_life_days=60,
             unit_cost=38.0,
@@ -114,46 +156,75 @@ def build_products() -> List[ProductSKU]:
             unit_volume_m3=0.0014,
             case_pack_qty=24
         ),
+
+        # --- 3. PHARMACEUTICALS SECTION (5 SKUs: Critical Health, Cold-Chain Insulin, OTC & Antibiotics) ---
         ProductSKU(
-            sku="SKU-PCK-03",
-            name="RoyalTruffle Dark Cocoa Bites 120g",
-            category=ProductCategory.PACKAGED_FOODS,
-            shelf_life_days=120,
-            min_retail_shelf_life_days=30,
-            unit_cost=95.0,
-            retail_price=160.0,
-            weight_kg=0.14,
-            cold_chain_required=False,
-            unit_volume_m3=0.0005,
-            case_pack_qty=16
+            sku="SKU-PHA-01",
+            name="Insulin Glargine Solostar Bio-Pen 3ml",
+            category=ProductCategory.PHARMACEUTICALS,
+            shelf_life_days=365,
+            min_retail_shelf_life_days=90,
+            unit_cost=480.0,
+            retail_price=750.0,
+            weight_kg=0.10,
+            cold_chain_required=True,
+            unit_volume_m3=0.0002,
+            case_pack_qty=10
         ),
         ProductSKU(
-            sku="SKU-HPC-01",
-            name="AyurHerb Botanical Scalp Shampoo 400ml",
-            category=ProductCategory.PERSONAL_CARE,
+            sku="SKU-PHA-02",
+            name="AzithroCare 500mg Antibiotic Strips 3s",
+            category=ProductCategory.PHARMACEUTICALS,
             shelf_life_days=720,
             min_retail_shelf_life_days=180,
-            unit_cost=140.0,
-            retail_price=280.0,
-            weight_kg=0.45,
+            unit_cost=65.0,
+            retail_price=115.0,
+            weight_kg=0.04,
             cold_chain_required=False,
-            unit_volume_m3=0.0011,
-            case_pack_qty=12
+            unit_volume_m3=0.0001,
+            case_pack_qty=50
         ),
         ProductSKU(
-            sku="SKU-HPC-02",
-            name="BioClean Triple-Action Laundry Pods 30s",
-            category=ProductCategory.PERSONAL_CARE,
-            shelf_life_days=720,
-            min_retail_shelf_life_days=180,
-            unit_cost=210.0,
-            retail_price=399.0,
-            weight_kg=0.65,
+            sku="SKU-PHA-03",
+            name="Paracip 650mg Antipyretic Tablets 15s",
+            category=ProductCategory.PHARMACEUTICALS,
+            shelf_life_days=1095,
+            min_retail_shelf_life_days=270,
+            unit_cost=18.0,
+            retail_price=32.0,
+            weight_kg=0.06,
             cold_chain_required=False,
-            unit_volume_m3=0.0022,
-            case_pack_qty=8
+            unit_volume_m3=0.0001,
+            case_pack_qty=60
+        ),
+        ProductSKU(
+            sku="SKU-PHA-04",
+            name="VitaCee + Zinc Chewable Immunity 30s",
+            category=ProductCategory.PHARMACEUTICALS,
+            shelf_life_days=540,
+            min_retail_shelf_life_days=120,
+            unit_cost=75.0,
+            retail_price=140.0,
+            weight_kg=0.08,
+            cold_chain_required=False,
+            unit_volume_m3=0.0002,
+            case_pack_qty=30
+        ),
+        ProductSKU(
+            sku="SKU-PHA-05",
+            name="Pediatrix Electrolyte ORS Solution 200ml",
+            category=ProductCategory.PHARMACEUTICALS,
+            shelf_life_days=360,
+            min_retail_shelf_life_days=90,
+            unit_cost=26.0,
+            retail_price=45.0,
+            weight_kg=0.24,
+            cold_chain_required=False,
+            unit_volume_m3=0.0004,
+            case_pack_qty=24
         )
     ]
+
 
 def build_network_nodes() -> Tuple[List[NetworkNode], List[NetworkNode], List[NetworkNode]]:
     # Central Mother Warehouses (CWHs)
@@ -619,15 +690,18 @@ def generate_demand_forecasts(
         for p in products:
             # Baseline demand depends on store type and category
             if dest.type == NodeType.DARK_STORE:
-                # Dark stores sell ultra-fresh, dairy & beverages fast!
-                category_boost = 1.6 if p.category in [ProductCategory.DAIRY_FRESH, ProductCategory.BEVERAGES] else 1.0
+                # Dark stores sell ultra-fresh groceries, quick essentials & fast cosmetics
+                category_boost = 1.6 if p.category == ProductCategory.GROCERIES else (1.3 if p.category == ProductCategory.PHARMACEUTICALS else 1.1)
                 base_daily = random.randint(180, 480) * category_boost
             elif dest.type == NodeType.RETAIL_SUPERMARKET:
-                # Modern trade has high grocery & packaged goods basket
-                category_boost = 1.5 if p.category in [ProductCategory.PACKAGED_FOODS, ProductCategory.PERSONAL_CARE] else 1.1
+                # Modern trade has high cosmetics & grocery baskets
+                category_boost = 1.6 if p.category in [ProductCategory.COSMETICS, ProductCategory.GROCERIES] else 1.2
                 base_daily = random.randint(220, 550) * category_boost
             else:
-                base_daily = random.randint(120, 320)
+                # General trade kiranas & local pharmacies
+                category_boost = 1.5 if p.category in [ProductCategory.GROCERIES, ProductCategory.PHARMACEUTICALS] else 1.0
+                base_daily = random.randint(140, 340) * category_boost
+
 
             # 7-day planning window forecast
             base_window = int(base_daily * 7)

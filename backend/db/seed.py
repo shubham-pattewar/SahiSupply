@@ -37,8 +37,12 @@ def generate_historical_demand_series(
         promo_factor = event_calendar.get(dest.id, 1.0)
         for prod in products:
             base_mean = 280.0 if dest.type == NodeType.DARK_STORE else (350.0 if dest.type == NodeType.RETAIL_SUPERMARKET else 180.0)
-            if prod.category in [ProductCategory.DAIRY_FRESH, ProductCategory.BEVERAGES]:
-                base_mean *= 1.35
+            if prod.category == ProductCategory.GROCERIES:
+                base_mean *= 1.30
+            elif prod.category == ProductCategory.COSMETICS:
+                base_mean *= 0.95
+            elif prod.category == ProductCategory.PHARMACEUTICALS:
+                base_mean *= 1.10
 
             for d in range(days):
                 curr_date = start_date + timedelta(days=d)
@@ -50,7 +54,7 @@ def generate_historical_demand_series(
 
                 # Periodic marketing campaign (every 21 days for 4 days)
                 is_promo = 1 if (d % 21) < 4 else 0
-                promo_multiplier = 1.25 if is_promo else 1.0
+                promo_multiplier = 1.40 if (is_promo and prod.category == ProductCategory.COSMETICS) else (1.25 if is_promo else 1.0)
 
                 # Festive surge in last 14 days
                 festival_multiplier = 1.0
@@ -59,7 +63,8 @@ def generate_historical_demand_series(
 
                 # Synthetic temperature/weather index (e.g. 26 to 38 deg C)
                 temperature = 28.0 + 6.0 * math.sin(d / 15.0) + random.uniform(-1.5, 1.5)
-                temp_factor = 1.15 if (temperature > 32.0 and prod.category in [ProductCategory.DAIRY_FRESH, ProductCategory.BEVERAGES]) else 1.0
+                temp_factor = 1.18 if (temperature > 32.0 and prod.category == ProductCategory.GROCERIES) else 1.0
+
 
                 expected_demand = base_mean * dow_multiplier * promo_multiplier * festival_multiplier * temp_factor
                 actual_demand = max(0, int(random.gauss(expected_demand, expected_demand * 0.12)))

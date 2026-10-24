@@ -1,7 +1,7 @@
 import {
   NetworkNode, ProductSKU, InventoryBatch, DemandForecast,
   AllocationRecommendation, NetworkSummaryMetrics, ConstraintAudit,
-  BenchmarkComparison, ForwardForecastResponse
+  BenchmarkComparison, ForwardForecastResponse, SectionMetadata
 } from '../types';
 
 const API_BASE = '/api';
@@ -16,6 +16,11 @@ export async function fetchDatabaseStatus() {
   return res.json();
 }
 
+export async function fetchSections(): Promise<SectionMetadata[]> {
+  const res = await fetch(`${API_BASE}/sections`);
+  return res.json();
+}
+
 export async function fetchNetworkNodes(): Promise<{
   cwhs: NetworkNode[];
   rdcs: NetworkNode[];
@@ -25,23 +30,37 @@ export async function fetchNetworkNodes(): Promise<{
   return res.json();
 }
 
-export async function fetchProducts(): Promise<ProductSKU[]> {
-  const res = await fetch(`${API_BASE}/products`);
+export async function fetchProducts(category?: string): Promise<ProductSKU[]> {
+  const url = category && category !== 'All' 
+    ? `${API_BASE}/products?category=${encodeURIComponent(category)}`
+    : `${API_BASE}/products`;
+  const res = await fetch(url);
   return res.json();
 }
 
-export async function fetchInventoryBatches(): Promise<InventoryBatch[]> {
-  const res = await fetch(`${API_BASE}/inventory/batches`);
+export async function fetchInventoryBatches(warehouseId?: string, sku?: string, category?: string): Promise<InventoryBatch[]> {
+  const params = new URLSearchParams();
+  if (warehouseId) params.append('warehouse_id', warehouseId);
+  if (sku) params.append('sku', sku);
+  if (category && category !== 'All') params.append('category', category);
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${API_BASE}/inventory/batches${queryStr}`);
   return res.json();
 }
 
-export async function fetchRecommendations(): Promise<AllocationRecommendation[]> {
-  const res = await fetch(`${API_BASE}/distribution/recommendations`);
+export async function fetchRecommendations(category?: string): Promise<AllocationRecommendation[]> {
+  const url = category && category !== 'All'
+    ? `${API_BASE}/distribution/recommendations?category=${encodeURIComponent(category)}`
+    : `${API_BASE}/distribution/recommendations`;
+  const res = await fetch(url);
   return res.json();
 }
 
-export async function fetchMetrics(): Promise<NetworkSummaryMetrics> {
-  const res = await fetch(`${API_BASE}/distribution/metrics`);
+export async function fetchMetrics(category?: string): Promise<NetworkSummaryMetrics> {
+  const url = category && category !== 'All'
+    ? `${API_BASE}/distribution/metrics?category=${encodeURIComponent(category)}`
+    : `${API_BASE}/distribution/metrics`;
+  const res = await fetch(url);
   return res.json();
 }
 

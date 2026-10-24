@@ -41,7 +41,7 @@ class SupplyChainCopilotEngine:
             ],
             "critical_actions_required": [
                 f"Approve {len(top_stockout_preventions)} high-priority emergency dispatches to prevent stockouts in festive retail zones.",
-                f"Authorize cold-chain reefer fleet dispatches for {len([r for r in recommendations if 'Cold-Chain' in r.transport_mode])} dairy and beverage consignments.",
+                f"Authorize cold-chain reefer fleet dispatches for {len([r for r in recommendations if 'Cold-Chain' in r.transport_mode])} temperature-sensitive grocery and pharmaceutical consignments.",
                 f"Review {len(top_salvage)} FEFO salvage allocations departing within the next 6 hours."
             ]
         }
@@ -101,7 +101,7 @@ class SupplyChainCopilotEngine:
                 "metric_highlight": f"{metrics.fulfillment_rate_pct}% Order Fulfillment Rate"
             }
 
-        # Query 4: Cold chain or dairy
+        # Query 4: Cold chain or temperature
         elif any(term in q for term in ["cold", "dairy", "reefer", "chilled", "temperature"]):
             cold_recs = [r for r in recommendations if "Cold-Chain" in r.transport_mode]
             total_cold_units = sum(r.quantity_units for r in cold_recs)
@@ -109,10 +109,53 @@ class SupplyChainCopilotEngine:
                 "category": "Cold-Chain & Fresh Goods Logistics",
                 "answer": (
                     f"The engine flagged {len(cold_recs)} shipments requiring dedicated temperature-controlled Reefer transport, "
-                    f"representing **{total_cold_units:,} units** of ultra-fresh paneer, Greek yogurt, and cold-pressed juices. "
-                    f"These routes incorporate strict 2-8°C transit constraints and accelerated transit schedules to preserve shelf life."
+                    f"representing **{total_cold_units:,} units** of ultra-fresh dairy (paneer, Greek yogurt), cold-pressed beverages, "
+                    f"and critical pharmaceuticals (Insulin Glargine Bio-Pens). "
+                    f"These routes enforce strict 2–8°C refrigerated transit constraints and expedited dispatch."
                 ),
                 "metric_highlight": f"{len(cold_recs)} Reefer Express Dispatches"
+            }
+
+        # Query 5: Cosmetics Sector
+        elif any(term in q for term in ["cosmetic", "beauty", "skin", "serum", "lipstick"]):
+            cos_recs = [r for r in recommendations if r.category.value == "Cosmetics"]
+            cos_units = sum(r.quantity_units for r in cos_recs)
+            return {
+                "category": "Cosmetics Sector Intelligence",
+                "answer": (
+                    f"In the **Cosmetics & Beauty sector**, the engine is managing **{len(cos_recs)} allocation orders** ({cos_units:,} units). "
+                    f"Cosmetics carry the highest average gross margin (62%), making stockout prevention exceptionally high-ROI. "
+                    f"The engine accounts for festive campaign lifts (1.4x promo multiplier) and protects minimum retail dock shelf-life requirements (180+ days)."
+                ),
+                "metric_highlight": f"{len(cos_recs)} Cosmetic Orders ({cos_units:,} units)"
+            }
+
+        # Query 6: Pharmaceuticals Sector
+        elif any(term in q for term in ["pharma", "medicine", "drug", "insulin", "antibiotic", "health"]):
+            pha_recs = [r for r in recommendations if r.category.value == "Pharmaceuticals"]
+            pha_units = sum(r.quantity_units for r in pha_recs)
+            return {
+                "category": "Pharmaceuticals Sector Intelligence",
+                "answer": (
+                    f"In the **Pharmaceuticals & Healthcare sector**, the engine is executing **{len(pha_recs)} shipments** ({pha_units:,} units). "
+                    f"Priorities are configured for near-zero stockout tolerance on essential antibiotics (AzithroCare) and antipyretics (Paracip), "
+                    f"along with strict 2–8°C cold-chain tracking for Insulin Glargine Solostar pens and 100% FEFO regulatory batch compliance."
+                ),
+                "metric_highlight": f"{len(pha_recs)} Pharma Shipments (100% FEFO Compliance)"
+            }
+
+        # Query 7: Groceries Sector
+        elif any(term in q for term in ["grocer", "food", "staple", "snack"]):
+            gro_recs = [r for r in recommendations if r.category.value == "Groceries"]
+            gro_units = sum(r.quantity_units for r in gro_recs)
+            return {
+                "category": "Groceries Sector Intelligence",
+                "answer": (
+                    f"In the **Groceries & Fresh Dairy sector**, the engine coordinates **{len(gro_recs)} dispatches** ({gro_units:,} units). "
+                    f"Given short shelf-life horizons (14–45 days for paneer, yogurt, juices), the engine routes aging inventory to 10-minute Quick Commerce Dark Stores, "
+                    f"eliminating dump wastage while fulfilling grocery replenishment cycles."
+                ),
+                "metric_highlight": f"{len(gro_recs)} Grocery Orders ({gro_units:,} units)"
             }
 
         # Default Fallback Query
@@ -121,9 +164,9 @@ class SupplyChainCopilotEngine:
                 "category": "Operational Intelligence",
                 "answer": (
                     f"SahiSupply AI is currently managing **{len(recommendations)} active allocation directives** "
-                    f"across 4 Central Warehouses, 8 RDCs, and 16 Retail/Dark Store clusters. "
+                    f"across 3 specialized industry sectors: **Cosmetics, Groceries, and Pharmaceuticals**. "
                     f"Network-wide demand of {metrics.total_network_demand:,} units is being fulfilled at {metrics.fulfillment_rate_pct}% efficiency, "
-                    f"with full FEFO compliance and ₹{metrics.cost_saved_vs_baseline:,.2f} in quantified supply chain savings."
+                    f"with full FEFO compliance, multi-echelon pooling, and ₹{metrics.cost_saved_vs_baseline:,.2f} in verified supply chain savings."
                 ),
-                "metric_highlight": f"{len(recommendations)} Optimized Shipments"
+                "metric_highlight": f"{len(recommendations)} Optimized Shipments across 3 Sectors"
             }

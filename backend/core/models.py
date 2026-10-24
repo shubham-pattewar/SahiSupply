@@ -3,10 +3,9 @@ from typing import List, Dict, Optional, Any
 from pydantic import BaseModel, Field
 
 class ProductCategory(str, Enum):
-    DAIRY_FRESH = "Dairy & Ultra-Fresh"
-    BEVERAGES = "Cold-Pressed Beverages"
-    PACKAGED_FOODS = "Packaged Foods & Snacks"
-    PERSONAL_CARE = "Personal & Home Care"
+    COSMETICS = "Cosmetics"
+    GROCERIES = "Groceries"
+    PHARMACEUTICALS = "Pharmaceuticals"
 
 class NodeType(str, Enum):
     CWH = "Central Warehouse (Mother Hub)"

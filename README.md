@@ -4,7 +4,19 @@
 
 # SahiSupply™ AI — Enterprise FMCG Distribution Intelligence Engine
 
-An enterprise-grade, AI-powered distribution intelligence and inventory allocation engine designed to optimize multi-echelon supply chain decisions for FMCG (Fast-Moving Consumer Goods) enterprises.
+An enterprise-grade, AI-powered distribution intelligence and inventory allocation engine designed to optimize multi-echelon supply chain decisions for FMCG (Fast-Moving Consumer Goods) enterprises across **Cosmetics**, **Groceries**, and **Pharmaceuticals**.
+
+---
+
+## 🏢 Three Specialized Industry Verticals
+
+SahiSupply is architected to optimize distinct operational constraints across three enterprise sectors:
+
+| Vertical | Domain Focus & Regulatory Rules | SKU Catalog (15 Total) | Key Operational Highlights |
+| :--- | :--- | :--- | :--- |
+| 💄 **Cosmetics & Beauty** | High gross margins (60%+), festive/wedding demand surges, UV protection | 5 SKUs: GlowAura Vitamin C Serum, HydraPlump Aqua Gel, SunShield SPF50, VelvetMatte Lipstick, AyurHerb Hair Therapy | Minimum dock acceptance: 120–270d; high unit margin preservation; campaign promo elasticity (1.4x lift) |
+| 🛒 **Groceries & Fresh Dairy** | Ultra-perishable shelf-life (14–21d), high turnover velocity, FEFO salvage | 5 SKUs: Amrit Malai Paneer, ProBio Greek Yogurt, PureValencia Juice, NutriBake Oats, DesiSpices Noodles | Dedicated Cold-Chain Reefer fleet (2–8°C); 10-minute Quick Commerce Dark Store routing; 100% FEFO salvage |
+| 💊 **Pharmaceuticals & Health** | Critical essential healthcare, regulatory barcode tracking, zero stockouts | 5 SKUs: Insulin Glargine Solostar Pen, AzithroCare Antibiotic, Paracip 650mg, VitaCee + Zinc, Pediatrix ORS | Strict cold-chain biologicals (2–8°C); zero stockout penalty; non-negotiable OTIF; strict dock expiry validation |
 
 ---
 

@@ -3,14 +3,17 @@ import {
   fetchNetworkNodes, fetchProducts, fetchInventoryBatches,
   fetchRecommendations, fetchMetrics, fetchBenchmark,
   fetchConstraintAudit, resetSimulation, runSimulation,
-  approveRecommendation, batchApproveRecommendations, fetchDatabaseStatus
+  approveRecommendation, batchApproveRecommendations, fetchDatabaseStatus,
+  fetchSections
 } from './api/client';
 import {
   NetworkNode, ProductSKU, InventoryBatch, AllocationRecommendation,
-  NetworkSummaryMetrics, BenchmarkComparison, ConstraintAudit
+  NetworkSummaryMetrics, BenchmarkComparison, ConstraintAudit,
+  SectionType, SectionMetadata
 } from './types';
 import { Header } from './components/Header';
 import { TelemetryStrip } from './components/TelemetryStrip';
+import { SectionSelector } from './components/SectionSelector';
 import { LeafletNetworkMap } from './components/LeafletNetworkMap';
 import { RecommendationsTable } from './components/RecommendationsTable';
 import { ImpactBenchmark } from './components/ImpactBenchmark';
@@ -29,6 +32,8 @@ export const App: React.FC = () => {
   const [products, setProducts] = useState<ProductSKU[]>([]);
   const [batches, setBatches] = useState<InventoryBatch[]>([]);
   const [recommendations, setRecommendations] = useState<AllocationRecommendation[]>([]);
+  const [sections, setSections] = useState<SectionMetadata[]>([]);
+  const [activeSection, setActiveSection] = useState<SectionType>('All');
   const [metrics, setMetrics] = useState<NetworkSummaryMetrics | null>(null);
   const [benchmark, setBenchmark] = useState<BenchmarkComparison | null>(null);
   const [audit, setAudit] = useState<ConstraintAudit | null>(null);
@@ -47,17 +52,19 @@ export const App: React.FC = () => {
     setTimeout(() => setToast(null), 3500);
   };
 
-  const loadAllData = async () => {
+  const loadAllData = async (sectionOverride?: SectionType) => {
     try {
-      const [nodesData, prodsData, batchesData, recsData, metricsData, benchData, auditData, dbStatus] = await Promise.all([
+      const targetSec = sectionOverride || activeSection;
+      const [nodesData, prodsData, batchesData, recsData, metricsData, benchData, auditData, dbStatus, sectionsData] = await Promise.all([
         fetchNetworkNodes(),
         fetchProducts(),
         fetchInventoryBatches(),
         fetchRecommendations(),
-        fetchMetrics(),
+        fetchMetrics(targetSec),
         fetchBenchmark(),
         fetchConstraintAudit(),
-        fetchDatabaseStatus()
+        fetchDatabaseStatus(),
+        fetchSections()
       ]);
 
       setNodes(nodesData);
@@ -68,10 +75,36 @@ export const App: React.FC = () => {
       setBenchmark(benchData);
       setAudit(auditData);
       setIsDbMock(dbStatus.is_mock);
+      setSections(sectionsData);
     } catch (err) {
       console.error('Error fetching initial data:', err);
       showToast('Error connecting to SahiSupply backend.', 'error');
     }
+  };
+
+  const handleSelectSection = async (nextSection: SectionType) => {
+    setActiveSection(nextSection);
+    try {
+      const secMetrics = await fetchMetrics(nextSection);
+      setMetrics(secMetrics);
+    } catch (err) {
+      console.error('Error fetching section metrics:', err);
+    }
+  };
+
+  const filteredRecommendations = activeSection === 'All'
+    ? recommendations
+    : recommendations.filter(r => r.category.toLowerCase() === activeSection.toLowerCase());
+
+  const filteredBatches = activeSection === 'All'
+    ? batches
+    : batches.filter(b => b.category.toLowerCase() === activeSection.toLowerCase());
+
+  const orderCounts = {
+    all: recommendations.length,
+    cosmetics: recommendations.filter(r => r.category === 'Cosmetics').length,
+    groceries: recommendations.filter(r => r.category === 'Groceries').length,
+    pharmaceuticals: recommendations.filter(r => r.category === 'Pharmaceuticals').length
   };
 
   const handleToggleTheme = () => {
@@ -192,6 +225,16 @@ export const App: React.FC = () => {
       {/* KPI Telemetry Strip */}
       <TelemetryStrip metrics={metrics} />
 
+      {/* 3 Industry Sectors Switcher: Cosmetics | Groceries | Pharmaceuticals */}
+      <div className="px-6 pt-3">
+        <SectionSelector
+          activeSection={activeSection}
+          onSelectSection={handleSelectSection}
+          sections={sections}
+          orderCounts={orderCounts}
+        />
+      </div>
+
       {/* Navigation Tabs */}
       <nav className="px-6 pt-3 pb-1 border-b border-white/10 overflow-x-auto">
         <div className="flex items-center gap-2 min-w-max">
@@ -274,14 +317,14 @@ export const App: React.FC = () => {
         {activeTab === 'map' && (
           <LeafletNetworkMap
             nodes={nodes}
-            recommendations={recommendations}
-            batches={batches}
+            recommendations={filteredRecommendations}
+            batches={filteredBatches}
           />
         )}
 
         {activeTab === 'recs' && (
           <RecommendationsTable
-            recommendations={recommendations}
+            recommendations={filteredRecommendations}
             onApprove={handleApprove}
           />
         )}

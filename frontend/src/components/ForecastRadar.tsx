@@ -80,9 +80,21 @@ export const ForecastRadar: React.FC<ForecastRadarProps> = ({
             onChange={(e) => setSelectedSku(e.target.value)}
             className="text-xs px-3 py-2 rounded-lg bg-slate-900 border border-white/10 text-slate-200 focus:outline-none focus:border-cyan-500/50"
           >
-            {products.map(p => (
-              <option key={p.sku} value={p.sku}>{p.name} [{p.category}]</option>
-            ))}
+            <optgroup label="💄 Cosmetics Section">
+              {products.filter(p => p.category === 'Cosmetics').map(p => (
+                <option key={p.sku} value={p.sku}>{p.name} ({p.sku})</option>
+              ))}
+            </optgroup>
+            <optgroup label="🛒 Groceries Section">
+              {products.filter(p => p.category === 'Groceries').map(p => (
+                <option key={p.sku} value={p.sku}>{p.name} ({p.sku})</option>
+              ))}
+            </optgroup>
+            <optgroup label="💊 Pharmaceuticals Section">
+              {products.filter(p => p.category === 'Pharmaceuticals').map(p => (
+                <option key={p.sku} value={p.sku}>{p.name} ({p.sku})</option>
+              ))}
+            </optgroup>
           </select>
         </div>
       </div>

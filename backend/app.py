@@ -44,8 +44,12 @@ class EnterpriseSupplyChainState:
     ML Forecaster, and Independent Constraint Checker.
     """
     def __init__(self):
-        # 1. Initialize & Seed MongoDB if empty
-        if mongo_manager.warehouses.count_documents({}) == 0:
+        # 1. Initialize & Seed MongoDB if empty or outdated product catalog (<15 SKUs) or missing demand history
+        if (
+            mongo_manager.warehouses.count_documents({}) == 0
+            or mongo_manager.products.count_documents({}) < 15
+            or mongo_manager.demand_history.count_documents({}) == 0
+        ):
             seed_database()
 
         # 2. Load entities from MongoDB
@@ -138,22 +142,90 @@ def get_network_nodes():
         "destinations": [n.model_dump() for n in state.destinations]
     }
 
+@app.get("/api/sections")
+def get_sections():
+    """
+    Returns enterprise sector metadata across Cosmetics, Groceries, and Pharmaceuticals.
+    """
+    cosmetics_skus = [p for p in state.products if p.category == ProductCategory.COSMETICS]
+    groceries_skus = [p for p in state.products if p.category == ProductCategory.GROCERIES]
+    pharma_skus = [p for p in state.products if p.category == ProductCategory.PHARMACEUTICALS]
+
+    return [
+        {
+            "id": "Cosmetics",
+            "name": "Cosmetics & Personal Care",
+            "tagline": "High Margin & Beauty Campaign Lift",
+            "icon": "Sparkles",
+            "color": "rose",
+            "description": "Beauty serums, sunscreens, skincare & color cosmetics with 60%+ gross margins, festive gifting lifts, and UV protection.",
+            "sku_count": len(cosmetics_skus),
+            "cold_chain_required": False,
+            "characteristics": [
+                "High retail margin protection (60%+)",
+                "Wedding & festive seasonal campaign surges",
+                "Minimum retail shelf-life dock requirement: 120–270 days",
+                "Compact volume high-density palletization"
+            ]
+        },
+        {
+            "id": "Groceries",
+            "name": "Groceries & Fresh Dairy",
+            "tagline": "Perishable Velocity & FEFO Salvage",
+            "icon": "ShoppingCart",
+            "color": "emerald",
+            "description": "High-velocity food staples, cold-pressed juices, and fresh dairy demanding strict FEFO shelf-life salvage.",
+            "sku_count": len(groceries_skus),
+            "cold_chain_required": True,
+            "characteristics": [
+                "Reefer fleet cold-chain dispatch (dairy & cold-pressed)",
+                "Ultra-fresh 14–21 day shelf life",
+                "100% FEFO retail dock acceptance enforcement",
+                "Dark-store 10-minute quick-turnover routing"
+            ]
+        },
+        {
+            "id": "Pharmaceuticals",
+            "name": "Pharmaceuticals & Healthcare",
+            "tagline": "Strict Regulatory & Zero Stockout Tolerance",
+            "icon": "Pill",
+            "color": "sky",
+            "description": "Essential medicines, cold-chain insulin biologicals, and OTC healthcare requiring 100% OTIF fulfillment.",
+            "sku_count": len(pharma_skus),
+            "cold_chain_required": True,
+            "characteristics": [
+                "Strict 2–8°C cold-chain insulin compliance",
+                "Zero stockout priority on essential medications",
+                "Rigorous batch barcode traceability",
+                "Strict regulatory FEFO dock acceptance (min 90–270d)"
+            ]
+        }
+    ]
+
 @app.get("/api/products")
-def get_products():
-    return [p.model_dump() for p in state.products]
+def get_products(category: Optional[str] = None):
+    prods = state.products
+    if category and category.lower() != "all":
+        prods = [p for p in prods if p.category.value.lower() == category.lower()]
+    return [p.model_dump() for p in prods]
 
 @app.get("/api/inventory/batches")
-def get_inventory_batches(warehouse_id: Optional[str] = None, sku: Optional[str] = None):
+def get_inventory_batches(warehouse_id: Optional[str] = None, sku: Optional[str] = None, category: Optional[str] = None):
     results = state.batches
     if warehouse_id:
         results = [b for b in results if b.warehouse_id == warehouse_id]
     if sku:
         results = [b for b in results if b.sku == sku]
+    if category and category.lower() != "all":
+        results = [b for b in results if b.category.value.lower() == category.lower()]
     return [b.model_dump() for b in results]
 
 @app.get("/api/demand/forecasts")
-def get_demand_forecasts():
-    return [f.model_dump() for f in state.forecasts]
+def get_demand_forecasts(category: Optional[str] = None):
+    forecasts = state.forecasts
+    if category and category.lower() != "all":
+        forecasts = [f for f in forecasts if f.category.value.lower() == category.lower()]
+    return [f.model_dump() for f in forecasts]
 
 @app.get("/api/forecasting/models-evaluation")
 def evaluate_forecasting_models(destination_id: Optional[str] = None, sku: Optional[str] = None):
@@ -184,10 +256,10 @@ def get_distribution_recommendations(
     destination_id: Optional[str] = None
 ):
     recs = state.current_recommendations
-    if category:
-        recs = [r for r in recs if r.category.value == category]
-    if priority:
-        recs = [r for r in recs if r.priority.value == priority]
+    if category and category.lower() != "all":
+        recs = [r for r in recs if r.category.value.lower() == category.lower()]
+    if priority and priority.lower() != "all":
+        recs = [r for r in recs if priority.lower() in r.priority.value.lower()]
     if origin_id:
         recs = [r for r in recs if r.origin_id == origin_id]
     if destination_id:
@@ -195,8 +267,47 @@ def get_distribution_recommendations(
     return [r.model_dump() for r in recs]
 
 @app.get("/api/distribution/metrics")
-def get_distribution_metrics():
-    return state.current_metrics.model_dump()
+def get_distribution_metrics(category: Optional[str] = None):
+    if not category or category.lower() == "all":
+        return state.current_metrics.model_dump()
+    
+    cat_recs = [r for r in state.current_recommendations if r.category.value.lower() == category.lower()]
+    cat_forecasts = [f for f in state.forecasts if f.category.value.lower() == category.lower()]
+    
+    total_demand = sum(f.net_requirement for f in cat_forecasts)
+    total_alloc = sum(r.quantity_units for r in cat_recs)
+    unmet = max(0, total_demand - total_alloc)
+    stockout_rate = round((unmet / max(1, total_demand)) * 100.0, 2)
+    fulfillment_rate = round(100.0 - stockout_rate, 2)
+    freight = sum(r.freight_cost for r in cat_recs)
+    cost_per_unit = round(freight / max(1, total_alloc), 2)
+    waste_prev = sum(r.expiry_risk_mitigated_units for r in cat_recs)
+    waste_saved_val = round(waste_prev * 75.0, 2)
+    carbon = sum(r.carbon_emission_kg for r in cat_recs)
+    at_risk = sum(b.units_available for b in state.batches if b.category.value.lower() == category.lower() and b.remaining_shelf_life_pct <= 30.0)
+
+    base_pct = state.current_metrics.savings_vs_baseline_pct
+    cost_saved = round(freight * 0.22 + waste_saved_val * 0.65, 2)
+
+    return {
+        "total_network_demand": total_demand,
+        "total_allocated_units": total_alloc,
+        "unmet_stockout_units": unmet,
+        "stockout_rate_pct": stockout_rate,
+        "fulfillment_rate_pct": fulfillment_rate,
+        "total_freight_cost": round(freight, 2),
+        "cost_per_unit_shipped": cost_per_unit,
+        "inventory_at_risk_units": at_risk,
+        "wastage_prevented_units": waste_prev,
+        "wastage_loss_saved_value": waste_saved_val,
+        "fefo_compliance_pct": 100.0,
+        "total_carbon_emission_kg": round(carbon, 2),
+        "savings_vs_baseline_pct": base_pct,
+        "cost_saved_vs_baseline": cost_saved,
+        "stockout_reduction_pct": state.current_metrics.stockout_reduction_pct,
+        "waste_reduction_pct": state.current_metrics.waste_reduction_pct
+    }
+
 
 @app.get("/api/optimization/audit")
 def audit_constraints():

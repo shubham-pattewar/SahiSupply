@@ -189,3 +189,18 @@ export interface ForwardForecastResponse {
     };
   };
 }
+
+export type SectionType = 'All' | 'Cosmetics' | 'Groceries' | 'Pharmaceuticals';
+
+export interface SectionMetadata {
+  id: string;
+  name: string;
+  tagline: string;
+  icon: string;
+  color: string;
+  description: string;
+  sku_count: number;
+  cold_chain_required: boolean;
+  characteristics: string[];
+}
+

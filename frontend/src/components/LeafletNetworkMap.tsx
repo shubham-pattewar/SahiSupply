@@ -60,11 +60,18 @@ export const LeafletNetworkMap: React.FC<LeafletNetworkMapProps> = ({
   // Center on India
   const centerPosition: [number, number] = [21.5, 79.0];
 
+  const getRouteColor = (rec: AllocationRecommendation) => {
+    if (rec.transport_mode.includes('Cold')) return '#38bdf8';
+    if (rec.category === 'Cosmetics') return '#e879f9';
+    if (rec.category === 'Pharmaceuticals') return '#06b6d4';
+    return '#10b981';
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* 1. Interactive Leaflet Map Container */}
-      <div className="lg:col-span-2 glass-panel p-4 rounded-xl border border-white/10 relative h-[620px] flex flex-col">
-        <div className="flex justify-between items-center mb-3">
+      <div className="lg:col-span-2 glass-panel p-4 rounded-xl border border-white/10 relative h-[640px] flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
           <div>
             <h2 className="text-base font-bold text-white flex items-center gap-2">
               <Truck className="w-4 h-4 text-cyan-400" />
@@ -77,17 +84,41 @@ export const LeafletNetworkMap: React.FC<LeafletNetworkMapProps> = ({
           <div className="flex items-center gap-3 text-xs">
             <span className="flex items-center gap-1.5 text-slate-300">
               <span className="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-              <span>Central Plant (CWH)</span>
+              <span>Central Plant</span>
             </span>
             <span className="flex items-center gap-1.5 text-slate-300">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-              <span>Regional Depot (RDC)</span>
+              <span>Regional Depot</span>
             </span>
             <span className="flex items-center gap-1.5 text-slate-300">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span>Modern / Dark Store</span>
+              <span>Retail / Dark Store</span>
             </span>
           </div>
+        </div>
+
+        {/* Industry Sector Route Legend */}
+        <div className="flex flex-wrap items-center gap-3 mb-2.5 pt-1.5 border-t border-white/10 text-xs">
+          <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Sector Dispatch Corridors:</span>
+          <span className="flex items-center gap-1.5 text-pink-300 font-medium">
+            <span className="w-3.5 h-1 bg-pink-400 inline-block rounded-full"></span>
+            <span>💄 Cosmetics</span>
+          </span>
+          <span className="flex items-center gap-1.5 text-emerald-300 font-medium">
+            <span className="w-3.5 h-1 bg-emerald-400 inline-block rounded-full"></span>
+            <span>🛒 Groceries</span>
+          </span>
+          <span className="flex items-center gap-1.5 text-sky-300 font-medium">
+            <span className="w-3.5 h-1 bg-sky-400 inline-block rounded-full"></span>
+            <span>💊 Pharmaceuticals</span>
+          </span>
+          <span className="flex items-center gap-1.5 text-cyan-300 font-medium">
+            <span className="w-3.5 h-0.5 border-t-2 border-dashed border-cyan-400 inline-block"></span>
+            <span>❄️ Reefer Cold-Chain</span>
+          </span>
+          <span className="ml-auto text-[11px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+            {recommendations.length} Active Shipments
+          </span>
         </div>
 
         <div className="flex-1 w-full rounded-lg overflow-hidden border border-white/10 relative">
@@ -103,8 +134,8 @@ export const LeafletNetworkMap: React.FC<LeafletNetworkMapProps> = ({
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {/* Shipment Flow Arcs / Polylines */}
-            {recommendations.slice(0, 60).map((rec, i) => {
+            {/* Shipment Flow Arcs / Polylines filtered by Sector */}
+            {recommendations.slice(0, 80).map((rec, i) => {
               const orig = allNodes.find(n => n.id === rec.origin_id);
               const dest = allNodes.find(n => n.id === rec.destination_id);
               if (!orig || !dest) return null;
@@ -120,10 +151,10 @@ export const LeafletNetworkMap: React.FC<LeafletNetworkMapProps> = ({
                   key={`route-${rec.id}-${i}`}
                   positions={positions}
                   pathOptions={{
-                    color: isCold ? '#38bdf8' : '#818cf8',
-                    weight: isCold ? 2 : 1.2,
-                    opacity: 0.35,
-                    dashArray: isCold ? '4, 4' : undefined
+                    color: getRouteColor(rec),
+                    weight: isCold ? 2.5 : 1.5,
+                    opacity: 0.45,
+                    dashArray: isCold ? '5, 5' : undefined
                   }}
                 />
               );
