@@ -23,8 +23,8 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
       <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 text-white font-extrabold text-xl font-mono">
-          S²
+        <div className="bg-white rounded-xl p-1 shadow-md shadow-emerald-500/10 border border-white/20 flex items-center justify-center">
+          <img src="/logo.png" alt="SahiSupply Logo" className="h-9 w-auto object-contain" />
         </div>
         <div>
           <div className="flex items-center gap-2">

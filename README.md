@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./logo.png" alt="SahiSupply Brand Logo" width="340"/>
+</p>
+
 # SahiSupply™ AI — Enterprise FMCG Distribution Intelligence Engine
 
 An enterprise-grade, AI-powered distribution intelligence and inventory allocation engine designed to optimize multi-echelon supply chain decisions for FMCG (Fast-Moving Consumer Goods) enterprises.
